@@ -1,6 +1,6 @@
-transformers==4.31.0  # hoặc phiên bản gần đây phù hợp với mã của bạn
-torch==1.13.1  # hoặc phiên bản tương thích với môi trường và GPU của bạn
+transformers==4.31.0  
+torch==1.13.1  
 scikit-learn==1.1.2
 numpy==1.23.5
 pandas==1.5.3
-nltk==3.8.1  # cần cho wordnet và synonym_replacement
+nltk==3.8.1
