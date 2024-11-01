@@ -49,7 +49,7 @@ def train_phobert(model, train_loader, optimizer, criterion, epochs=5):
             loss.backward()
             optimizer.step()
         
-        print(f"Epoch {epoch + 1}, PhoBERT Loss: {total_loss / len(train_loader):.4f}")
+        print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
 
 # Huấn luyện mô hình kết hợp PhoBERT và Naive Bayes
 def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=5):
@@ -82,7 +82,7 @@ def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs
                 os.makedirs('state_dict', exist_ok=True)
                 
             # Lưu PhoBERT với độ chính xác cao nhất trong mô hình kết hợp
-            save_path = os.path.join('state_dict', f'{'combined model'}_combined_acc_{round(best_accuracy_combined, 4)}.pth')
+            save_path = os.path.join('state_dict', f'combined_model_combined_acc_{round(best_accuracy_combined, 4)}.pth')
             torch.save(best_model_state, save_path)
             print(f"Best combined model saved at: {save_path}")
 
