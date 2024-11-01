@@ -36,7 +36,7 @@ def initialize_models():
     return model_phobert, model_nb
 
 # Huấn luyện PhoBERT với FocalLoss
-def train_phobert(model, train_loader, optimizer, criterion, epochs=5):
+def train_phobert(model, train_loader, optimizer, criterion, epochs=10):
     for epoch in range(epochs):
         model.train()
         total_loss = 0
@@ -52,7 +52,7 @@ def train_phobert(model, train_loader, optimizer, criterion, epochs=5):
         print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
 
 # Huấn luyện mô hình kết hợp PhoBERT và Naive Bayes
-def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=5):
+def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=10):
     model_phobert, model_nb = initialize_models()
     optimizer = AdamW(model_phobert.parameters(), lr=5e-6)
     criterion = FocalLoss(alpha=[0.5, 2.0, 1.0], gamma=2.5)
@@ -91,4 +91,4 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 train_loader, test_loader, X_train_nb, X_test_nb, y_train_nb, y_test_nb = get_data_loaders()
 
 # Khởi động quá trình huấn luyện tích hợp
-train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=5)
+train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=10)
