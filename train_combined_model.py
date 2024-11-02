@@ -65,10 +65,7 @@ def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs
         
         # Huấn luyện PhoBERT
         train_phobert(model_phobert, train_loader, optimizer, criterion, epochs=1)
-        
-        # Đánh giá PhoBERT
-        #accuracy_phobert = evaluate(model_phobert, test_loader)
-        
+               
         # Đánh giá mô hình kết hợp PhoBERT và Naive Bayes
         accuracy_combined = combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_nb)
 
