@@ -1,3 +1,12 @@
+import nltk
+from nltk.data import find
+
+# Download the wordnet resource if not already downloaded
+try:
+    find('corpora/wordnet.zip')
+except LookupError:
+    nltk.download('wordnet')
+#train_phobert_absa.py
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch.nn as nn
 import torch
