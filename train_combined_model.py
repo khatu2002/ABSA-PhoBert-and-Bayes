@@ -72,7 +72,7 @@ def initialize_models():
     model_phobert.to(device)
     
     # Naive Bayes model
-    model_nb = train_naive_bayes(X_train_nb, y_train_nb, 0.5,fit_prior=True)
+    model_nb = train_naive_bayes(X_train_nb, y_train_nb)
     
     return model_phobert, model_nb
 
@@ -95,7 +95,7 @@ def train_phobert(model, train_loader, optimizer, criterion, epochs=6):
 # Huấn luyện mô hình kết hợp PhoBERT và Naive Bayes
 def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=6):
     model_phobert, model_nb = initialize_models()
-    combined_model = CombinedModel(model_phobert, model_nb)  # Initialize combined model
+    # combined_model = CombinedModel(model_phobert, model_nb)  # Initialize combined model
     optimizer = AdamW(model_phobert.parameters(), lr=5e-6)  # Giảm learning rate
     criterion = FocalLoss(alpha=[0.5, 2.0, 1.0], gamma=2.0)  # Điều chỉnh gamma cho Focal Loss
 
@@ -106,7 +106,7 @@ def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs
         print(f"--- Epoch {epoch + 1} ---")
         
         # Huấn luyện PhoBERT
-        train_phobert(model_phobert, train_loader, optimizer, criterion, epochs=2)
+        train_phobert(model_phobert, train_loader, optimizer, criterion, epochs=1)
         
         # Đánh giá mô hình kết hợp PhoBERT và Naive Bayes
         accuracy_combined = combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_nb)
