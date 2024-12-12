@@ -1,3 +1,4 @@
+#evaluate_model.py
 from sklearn.metrics import accuracy_score, classification_report
 import torch
 import numpy as np
@@ -45,7 +46,7 @@ def evaluate_naive_bayes(model_nb, X_test, y_test):
     return accuracy
 
 # Hàm đánh giá kết hợp giữa PhoBERT và Naive Bayes
-def combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_nb):
+def combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_nb,phobert_weight=0.7, nb_weight=0.3):
     model_phobert.eval()
     all_preds_combined = []
     all_labels = []
@@ -68,15 +69,27 @@ def combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_
             preds_nb = model_nb.predict(X_test_nb[idx * len(labels):(idx + 1) * len(labels)])
             probs_nb = model_nb.predict_proba(X_test_nb[idx * len(labels):(idx + 1) * len(labels)])  # Dự đoán xác suất
 
+            combined_preds = []
+
             # Kết hợp dự đoán bằng weighted voting
             for i in range(len(preds_phobert)):
-                weight_phobert = np.max(probs_phobert[i])  # Lấy xác suất cao nhất từ PhoBERT
-                weight_nb = np.max(probs_nb[i])  # Lấy xác suất cao nhất từ Naive Bayes
+                phobert_prob = probs_phobert[i]  
+                nb_prob = probs_nb[i]
+                # Apply Weighted Average Fusion for each class
+                combined_probs = [
+                    phobert_weight * phobert_prob[j] + nb_weight * nb_prob[j]
+                    for j in range(len(phobert_prob))  # Iterate over all classes
+                ]
+                
+                # Normalize combined probabilities to sum to 1 (optional for probabilities)
+                total_prob = sum(combined_probs)
+                combined_probs = [p / total_prob for p in combined_probs]  # Normalize
+                
+                # Get the class with the highest combined probability
+                combined_preds.append(combined_probs.index(max(combined_probs)))  # Index of max probability
+            all_preds_combined.extend(combined_preds)
 
-                if weight_phobert > weight_nb:  # Chọn dự đoán của PhoBERT
-                    all_preds_combined.append(preds_phobert[i])
-                else:  # Ngược lại, dùng Naive Bayes
-                    all_preds_combined.append(preds_nb[i])
+                
 
     # Đánh giá kết quả kết hợp
     accuracy = accuracy_score(all_labels, all_preds_combined)

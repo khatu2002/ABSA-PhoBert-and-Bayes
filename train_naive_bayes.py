@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
 # Hàm huấn luyện Naive Bayes
-def train_naive_bayes(X_train, y_train, alpha=1.0,fit_prior=True):
+def train_naive_bayes(X_train, y_train, alpha=0.1,fit_prior=True):
     model_nb = MultinomialNB(alpha=alpha,fit_prior=fit_prior)  # Có thể thử điều chỉnh alpha
     model_nb.fit(X_train, y_train)
     return model_nb

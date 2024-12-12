@@ -20,7 +20,7 @@ def load_aspect_dict(filepath):
 # Load PhoBERT tokenizer và model
 tokenizer = AutoTokenizer.from_pretrained("train_model")  # Tải tokenizer từ thư mục train_model
 model = AutoModelForSequenceClassification.from_pretrained("vinai/phobert-base", num_labels=3)
-model.load_state_dict(torch.load(MODEL_PATH))  # Tải trọng số từ file tích hợp
+model.load_state_dict(torch.load(MODEL_PATH, weights_only=True))  # Tải trọng số từ file tích hợp
 model.eval()
 
 # Load Naive Bayes model
