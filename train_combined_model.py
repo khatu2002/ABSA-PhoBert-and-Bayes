@@ -76,24 +76,54 @@ def initialize_models():
     
     return model_phobert, model_nb
 
-# Huấn luyện PhoBERT với FocalLoss
+# # Huấn luyện PhoBERT với FocalLoss
+# def train_phobert(model, train_loader, optimizer, criterion, epochs=6):
+#     for epoch in range(epochs):
+#         model.train()
+#         total_loss = 0
+#         for input_ids, attention_mask, labels in train_loader:
+#             input_ids, attention_mask, labels = input_ids.to(device), attention_mask.to(device), labels.to(device)
+#             optimizer.zero_grad()
+#             outputs = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+#             loss = criterion(outputs.logits, labels)
+#             total_loss += loss.item()
+#             loss.backward()
+#             optimizer.step()
+#         print(f"Phobert Train Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+
 def train_phobert(model, train_loader, optimizer, criterion, epochs=6):
     for epoch in range(epochs):
         model.train()
         total_loss = 0
+        correct_predictions = 0  # Đếm số lượng dự đoán đúng
+        total_samples = 0        # Tổng số mẫu
+        
         for input_ids, attention_mask, labels in train_loader:
             input_ids, attention_mask, labels = input_ids.to(device), attention_mask.to(device), labels.to(device)
             optimizer.zero_grad()
+            
+            # Forward pass
             outputs = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
             loss = criterion(outputs.logits, labels)
             total_loss += loss.item()
+            
+            # Backward pass
             loss.backward()
             optimizer.step()
+            
+            # Tính toán accuracy
+            preds = torch.argmax(outputs.logits, dim=1)  # Lấy nhãn dự đoán từ logits
+            correct_predictions += (preds == labels).sum().item()  # Số lượng dự đoán đúng
+            total_samples += labels.size(0)  # Cập nhật tổng số mẫu
         
-        print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+        avg_loss = total_loss / len(train_loader)  # Tính loss trung bình
+        accuracy = correct_predictions / total_samples  # Tính accuracy
+        
+        print(f"Phobert Train Epoch {epoch + 1}, Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}")
+
 
 # Huấn luyện mô hình kết hợp PhoBERT và Naive Bayes
-def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=6):
+def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=4):
     model_phobert, model_nb = initialize_models()
     # combined_model = CombinedModel(model_phobert, model_nb)  # Initialize combined model
     optimizer = AdamW(model_phobert.parameters(), lr=5e-6)  # Giảm learning rate
@@ -111,12 +141,12 @@ def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs
         # Đánh giá mô hình kết hợp PhoBERT và Naive Bayes
         accuracy_combined = combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_nb)
         # Đánh giá mô hình PhoBERT
-        accuracy_phobert = evaluate(model_phobert, test_loader)
-        #print(f"Độ chính xác của mô hình PhoBERT: {accuracy_phobert:.4f}")
+        accuracy_phobert, probs_phobert = evaluate(model_phobert, test_loader)
+        print(f"Độ chính xác của mô hình PhoBERT tập test: {accuracy_phobert:.4f}")
 
         # Đánh giá mô hình Naive Bayes
         accuracy_naive_bayes = evaluate_naive_bayes(model_nb, X_test_nb, y_test_nb)
-        print(f"Độ chính xác của mô hình Naive Bayes: {accuracy_naive_bayes:.4f}")
+        print(f"Độ chính xác của mô hình Naive Bayes tập test: {accuracy_naive_bayes:.4f}")
 
         # Lưu mô hình nếu kết hợp có độ chính xác cao nhất
         if accuracy_combined > best_accuracy_combined:
