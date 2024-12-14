@@ -19,7 +19,7 @@ def evaluate_naive_bayes(model, X_test, y_test):
         report = classification_report(y_test, preds, target_names=["negative", "neutral", "positive"])
         
         print(f"Naive Bayes Accuracy: {accuracy * 100:.2f}%")
-        print(report)
+        #print(report)
         
         return accuracy
     except Exception as e:
