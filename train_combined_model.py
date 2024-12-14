@@ -123,7 +123,7 @@ def train_phobert(model, train_loader, optimizer, criterion, epochs=6):
 
 
 # Huấn luyện mô hình kết hợp PhoBERT và Naive Bayes
-def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=4):
+def train_combined_model(train_loader, test_loader, X_test_nb, y_test_nb, epochs=6):
     model_phobert, model_nb = initialize_models()
     # combined_model = CombinedModel(model_phobert, model_nb)  # Initialize combined model
     optimizer = AdamW(model_phobert.parameters(), lr=5e-6)  # Giảm learning rate
