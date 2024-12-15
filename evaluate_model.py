@@ -1,5 +1,5 @@
 #evaluate_model.py
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import torch
 import numpy as np
 
@@ -169,6 +169,9 @@ def combined_evaluation(model_phobert, model_nb, test_loader, X_test_nb, y_test_
     print(f"Combined Model Accuracy: {accuracy * 100:.2f}%")
     print(f"Combined Model Loss: {avg_loss:.4f}")
     print(report)
-
+    # Tạo confusion matrix
+    conf_matrix = confusion_matrix(all_labels, all_preds_combined)
+    print("Confusion Matrix:")
+    print(conf_matrix)
     return accuracy
 
