@@ -95,16 +95,16 @@ def get_data_loaders(batch_size=16):
     test_data = pd.read_csv('test_final_cleaned.tsv', sep='\t', header=None, names=['sentence', 'aspect', 'sentiment'])
 
     # Cân bằng dữ liệu bằng cách oversampling và tăng cường dữ liệu
-    #train_data_balanced = oversample_data(train_data)
+    train_data_balanced = oversample_data(train_data)
 
     # Chuẩn bị dữ liệu cho Naive Bayes
-    X_train_nb = vectorizer.fit_transform(train_data['sentence'])
+    X_train_nb = vectorizer.fit_transform(train_data_balanced['sentence'])
     X_test_nb = vectorizer.transform(test_data['sentence'])
-    y_train_nb = train_data['sentiment']
+    y_train_nb = train_data_balanced['sentiment']
     y_test_nb = test_data['sentiment']
 
     # Tạo Dataset cho PhoBERT
-    train_dataset = ABSADataset(train_data)
+    train_dataset = ABSADataset(train_data_balanced)
     test_dataset = ABSADataset(test_data)
     
     # Tạo DataLoader
